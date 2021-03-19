@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 import { Account } from './pages';
+import { Pharmacys } from './pages';
+import { accountState } from './recoil';
 
 const App: React.FC = React.memo(() => {
-    const [state, setState] = useState({
-        isAuthenticated: false,
-    })
+    const { token } = useRecoilValue(accountState.accountDataState)
 
     useEffect(() => {
-        const init = async () => {
 
-        }
-
-        init()
     }, [])
 
-    return (
-        <Account />
-    );
+    if (token) {
+        return <Pharmacys />
+    }
+
+    return <Account />
 });
 
 export default App;

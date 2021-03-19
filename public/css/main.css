@@ -336,7 +336,7 @@ textarea.form-control {
     min-width: 135px; }
   .modal .modal-footer .btn-large {
     min-width: 220px; }
-
+body.login{min-height: 100vh;}
 body.login .logo-wrap {
   margin-top: 3rem;
   margin-bottom: -70px;
