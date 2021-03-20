@@ -2,16 +2,18 @@ import React, { useRef, useState } from "react"
 import { useAsync } from "../../hooks"
 import { debounce } from "../../utils"
 import { Header } from "../shared"
-import { getListPharmacy, IGetListPharmacyRequest } from '../../api'
+import { getListPharmacy } from '../../api'
 import { PharmacyModel } from "../../models/pharmacy"
 import Loading from "../shared/Loading"
 import useClickOutside from "../../hooks/useClickOutSide"
+import { useHistory } from "react-router"
 
 const SearchPharmacys = React.memo(() => {
 
+    const history = useHistory()
     const searchRef: any = useRef()
 
-    const [ state, setState ] = useState<{
+    const [state, setState] = useState<{
         offset: number,
         limit: number,
         searchValue: string,
@@ -45,7 +47,7 @@ const SearchPharmacys = React.memo(() => {
         const params = {
             offset: state.offset,
             limit: state.limit,
-            searchValue: value,
+            mName: value,
         }
 
         getListPharmacyAsync.execute(params).then(res => {
@@ -56,14 +58,14 @@ const SearchPharmacys = React.memo(() => {
                 show: true,
             }))
         })
-    }, 500)
+    }, 1000)
 
     const handleScroll = (e: any) => {
         const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
         const params = {
             offset: state.offset,
             limit: state.limit,
-            searchValue: state.searchValue,
+            mName: state.searchValue,
         }
 
         if (bottom) {
@@ -71,13 +73,13 @@ const SearchPharmacys = React.memo(() => {
                 setState(prev => ({
                     ...prev,
                     offset: prev.offset + 10,
-                    listPharmacy: [ ...prev.listPharmacy, ...res ]
+                    listPharmacy: [...prev.listPharmacy, ...res]
                 }))
             })
         }
     };
 
-    useClickOutside([ searchRef ], () => {
+    useClickOutside([searchRef], () => {
         setState(prev => ({ ...prev, show: false }))
     })
 
@@ -125,8 +127,8 @@ const SearchPharmacys = React.memo(() => {
                         <ul onScroll={handleScroll} style={{ maxHeight: "400px", overflowY: "auto" }}>
                             {
                                 state.listPharmacy.map((pharmacy: PharmacyModel) => {
-                                    return <li>
-                                        <a href="pharmacy.html">
+                                    return <li onClick={() => history.push(`/inventory-og-pharmacy?pharmacyId=${pharmacy.mId}`)}>
+                                        <a>
                                             <strong>{pharmacy.mName}</strong><br />
                                             <small className="txt-gray">{pharmacy.mPharCode}</small>
                                         </a>
@@ -139,7 +141,6 @@ const SearchPharmacys = React.memo(() => {
             </div>
         </div>
     </div>
-
 })
 
 export default SearchPharmacys
