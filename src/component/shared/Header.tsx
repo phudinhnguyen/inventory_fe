@@ -1,15 +1,27 @@
 import React from "react"
+import { Link } from "react-router-dom"
 
-const Header = React.memo(() => {
+interface IProps {
+    title: string
+    subTitle: string
+    backTo: string
+}
+
+const Header = React.memo((props: IProps) => {
+    const { title, subTitle, backTo = '/' } = props
+
     return <header>
         <nav className="navbar navbar-expand-xl">
             <span className="navbar-brand page-title">
-                NT Bình An<br />
-                <small>2 Lê Duẫn, P.1, Q.1, Đà Nẵng</small>
+                {title}<br />
+                <small>{subTitle}</small>
             </span>
-            <a href="homepage.html" className="btn-back">
+            <Link
+                className="btn-back"
+                to={backTo}
+            >
                 <img src="./images/back.svg" width="{9}" />
-            </a>
+            </Link>
         </nav>
     </header>
 })

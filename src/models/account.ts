@@ -2,5 +2,10 @@ import { DoctorModel } from '.';
 
 export interface LoginInfoModel {
     doctor: DoctorModel;
-    token: string;
+    loginSession: {
+        mToken: string
+        mUserId: string
+        mTtl: string
+        mCreated: string
+    };
 }

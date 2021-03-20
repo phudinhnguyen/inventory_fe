@@ -1,14 +1,14 @@
 import axios from 'axios';
+import { getAccountInfo } from './account';
 
 const client = axios.create({
     baseURL: process.env.REACT_APP_API_URL
 });
 
 client.interceptors.request.use(config => {
-    const session = window.localStorage.getItem('session');
-    if (session) {
-        const loginInfo = JSON.parse(session);
-        config.headers.Authorization = `Bearer ${ loginInfo.token }`;
+    const accountInfo = getAccountInfo()
+    if (accountInfo) {
+        config.headers.Authorization = `Bearer ${ accountInfo.loginSession.mToken }`;
     }
     return config;
 });

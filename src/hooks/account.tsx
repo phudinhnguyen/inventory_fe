@@ -1,18 +1,20 @@
 import React from "react"
 import { useSetRecoilState } from "recoil"
 import { accountState } from "../recoil"
-import { DoctorModel } from "../models"
+import { login, ILoginRequest, setAccountInfo } from '../api'
 
 export const useAccount = () => {
     const setAccountState = useSetRecoilState(accountState.accountDataState)
 
-    const login = async (payload: { email: string, password: string }) => {
-        // call api
-        setAccountState({ doctor: new DoctorModel(), token: "testToken" })
-        return Promise.resolve("data")
+    const loginAsync = async (payload: ILoginRequest) => {
+        return await login(payload).then(res => {
+            setAccountState(res)
+            setAccountInfo(res)
+            return res
+        })
     }
 
     return {
-        login
+        loginAsync
     }
 }

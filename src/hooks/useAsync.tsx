@@ -5,17 +5,17 @@ interface IState {
     value: any;
     error: any;
 }
-type IAscyncFunction<T> = (...args: any) => Promise<T>
+type IAscyncFunction<T> = (...args: any[]) => Promise<T>
 
 type IUseAsyncResponse<T> = {
     status: "ready" | "loading" | "error"
     value: T
     error: any
-    execute: (...args: any[]) => Promise<T>
+    execute: IAscyncFunction<T>
 }
 
 export const useAsync = <U,>(asyncFunction: IAscyncFunction<U>): IUseAsyncResponse<U> => {
-    const [state, setState] = useState<IState>({
+    const [ state, setState ] = useState<IState>({
         status: "ready",
         value: null,
         error: null,

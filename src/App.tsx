@@ -1,17 +1,22 @@
 import React, { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { getAccountInfo } from './api';
 import { Account } from './pages';
 import { Pharmacys } from './pages';
 import { accountState } from './recoil';
 
 const App: React.FC = React.memo(() => {
-    const { token } = useRecoilValue(accountState.accountDataState)
+    const [ accountDataState, setAccountDataState ] = useRecoilState(accountState.accountDataState)
 
     useEffect(() => {
+        const accountInfo = getAccountInfo()
 
+        if (accountInfo?.loginSession?.mToken) {
+            setAccountDataState(accountInfo)
+        }
     }, [])
 
-    if (token) {
+    if (accountDataState.loginSession?.mToken) {
         return <Pharmacys />
     }
 

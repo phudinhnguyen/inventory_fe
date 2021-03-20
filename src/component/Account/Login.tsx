@@ -5,23 +5,28 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { emailRegExp } from "../../utils";
 import { useAccount } from "../../hooks/account";
+import { useAsync } from "../../hooks";
+import { LoginInfoModel } from "../../models";
+import { Button } from "../shared";
 
 const validationSchema = yup
     .object()
     .shape({
-        email: yup
+        mEmail: yup
             .string()
             .required('Vui lòng nhập địa chỉ email hợp lệ.')
             .matches(emailRegExp, 'Vui lòng nhập địa chỉ email hợp lệ.'),
-        password: yup
-            .string()
+        mPassword: yup
+            .number()
             .required('Vui lòng nhập mật khẩu đúng.')
-            .min(6, 'Mật khẩu phải tối thiểu 6 ký tự.')
+            .min(3, 'Mật khẩu phải tối thiểu 6 ký tự.')
     });
 
 const Login = React.memo(() => {
-    const { login } = useAccount()
     const history = useHistory()
+
+    const account = useAccount()
+    const loginAsync = useAsync<LoginInfoModel>(account.loginAsync)
 
     return <body className="login bg-blue">
         <div id="main">
@@ -38,14 +43,12 @@ const Login = React.memo(() => {
                 <Formik
                     enableReinitialize={true}
                     initialValues={{
-                        email: '',
-                        password: ''
+                        mEmail: '',
+                        mPassword: ''
                     }}
                     validationSchema={validationSchema}
-                    onSubmit={async values => {
-                        console.log(values)
-                        login(values).then(res => {
-                            console.log('res: ', res);
+                    onSubmit={values => {
+                        loginAsync.execute(values).then(res => {
                             history.push("/search-pharmacys")
                         })
                     }}
@@ -57,48 +60,44 @@ const Login = React.memo(() => {
                         values,
                         handleChange,
                         handleSubmit
-                    }) =>
-                        <Form
-                            className="login-form"
-                            noValidate={true}
-                            validated={submitCount > 0}
-                            onSubmit={handleSubmit}
-                        >
+                    }) => <Form
+                        className="login-form"
+                        noValidate={true}
+                        validated={submitCount > 0}
+                        onSubmit={handleSubmit}
+                    >
                             <Form.Group>
                                 <Form.Control
-                                    name="email"
+                                    name="mEmail"
                                     placeholder="Email"
                                     required={true}
                                     type="email"
-                                    value={values.email}
+                                    value={values.mEmail}
                                     onChange={handleChange}
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.email}
+                                    {errors.mEmail}
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group>
                                 <Form.Control
-                                    name="password"
+                                    name="mPassword"
                                     placeholder="Mật khẩu"
                                     required={true}
                                     type="password"
-                                    value={values.password}
+                                    value={values.mPassword}
                                     onChange={handleChange}
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.password}
+                                    {errors.mPassword}
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <p className="text-right">
                             </p>
-                            <button
+                            <Button
                                 className="btn btn-block"
-                                disabled={isSubmitting}
                                 type="submit"
-                            >
-                                <>Đăng nhập</>
-                            </button>
+                            />
                         </Form>
                     }
                 </Formik>
