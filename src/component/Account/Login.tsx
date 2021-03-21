@@ -5,9 +5,9 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { emailRegExp } from "../../utils";
 import { useAccount } from "../../hooks/account";
-import { useAsync } from "../../hooks";
 import { LoginInfoModel } from "../../models";
 import { Button } from "../shared";
+import { useAsync } from "../../utils";
 
 const validationSchema = yup
     .object()

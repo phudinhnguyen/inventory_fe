@@ -1,3 +1,5 @@
+import { useLocation } from "react-router";
+
 export const setBodyClassName = (
     className: string
 ) => {

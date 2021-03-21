@@ -9,8 +9,7 @@ import { accountDataState } from "../../recoil/account"
 import { debounce, useAsync } from "../../utils"
 import useClickOutside from "../../utils/hooks/useClickOutSide"
 
-const SearchPharmacys = React.memo(() => {
-
+const SearchProduct = React.memo(() => {
     const history = useHistory()
     const searchRef: any = useRef()
     const inputSearch: any = useRef()
@@ -41,7 +40,7 @@ const SearchPharmacys = React.memo(() => {
     }
 
     const handleSeach = debounce((value: string) => {
-        if (value === '') {
+        if (value == '') {
             resetState()
             return
         }
@@ -102,7 +101,7 @@ const SearchPharmacys = React.memo(() => {
                             onClick={() => setState(prev => ({ ...prev, show: true }))}
                             type="text"
                             name="search"
-                            placeholder="Tìm kiếm theo tên nhà thuốc"
+                            placeholder="Tên theo tên thuốc"
                             className="input-search"
                             onChange={(e => {
                                 e.preventDefault()
@@ -119,7 +118,13 @@ const SearchPharmacys = React.memo(() => {
                     </form>
                 </div>
                 {
-                    state.show && state.listPharmacy.length !== 0 &&
+                    getListPharmacyAsync.status == 'loading' &&
+                    <div className='p-3 d-flex justify-content-center'>
+                        <Loading />
+                    </div>
+                }
+                {
+                    state.show && state.listPharmacy.length != 0 &&
                     <div className="search-results">
                         <ul onScroll={handleScroll} style={{ maxHeight: "400px", overflowY: "auto" }}>
                             {
@@ -135,15 +140,9 @@ const SearchPharmacys = React.memo(() => {
                         </ul>
                     </div>
                 }
-                {
-                    getListPharmacyAsync.status === 'loading' &&
-                    <div className='p-3 d-flex justify-content-center'>
-                        <Loading />
-                    </div>
-                }
             </div>
         </div>
     </div>
 })
 
-export default SearchPharmacys
+export default SearchProduct
