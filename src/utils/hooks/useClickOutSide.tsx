@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 
-const useClickOutside = (listRef: Array<any>, onClickOutside: Function) => {
+const useClickOutside = (onClickOutside: Function, listRef: Array<any>) => {
     useEffect(() => {
         document.addEventListener('mousedown', clickOutside)
         document.addEventListener('touchstart', clickOutside)

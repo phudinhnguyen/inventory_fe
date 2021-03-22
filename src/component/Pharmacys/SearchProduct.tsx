@@ -1,41 +1,51 @@
 import React, { useRef, useState } from "react"
 import { Header } from "../shared"
-import { getListPharmacy } from '../../api'
-import { PharmacyModel } from "../../models/pharmacy"
+import { searchProduct } from '../../api'
 import Loading from "../shared/Loading"
 import { useHistory } from "react-router"
 import { useRecoilValue } from "recoil"
 import { accountDataState } from "../../recoil/account"
 import { debounce, useAsync } from "../../utils"
 import useClickOutside from "../../utils/hooks/useClickOutSide"
+import { ProductModel } from "../../models"
 
 const SearchProduct = React.memo(() => {
     const history = useHistory()
     const searchRef: any = useRef()
     const inputSearch: any = useRef()
 
-    const getListPharmacyAsync = useAsync<Array<PharmacyModel>>(getListPharmacy)
+    const searchProductAsync = useAsync(searchProduct)
 
     const accountInfo = useRecoilValue(accountDataState)
     const [state, setState] = useState<{
-        offset: number,
-        limit: number,
-        listPharmacy: Array<PharmacyModel>,
+        from: number,
+        size: number,
+        listProduct: Array<ProductModel>,
         show: boolean,
+        outOfData: boolean,
+        total?: number,
     }>({
-        offset: 0,
-        limit: 10,
-        listPharmacy: [],
+        from: 0,
+        size: 10,
+        listProduct: [],
         show: false,
+        outOfData: false,
+        total: 0,
     })
+
+    useClickOutside(() => {
+        setState(prev => ({ ...prev, show: false }))
+    }, [searchRef])
 
     const resetState = () => {
         inputSearch.current.value = ''
         setState({
-            offset: 0,
-            limit: 10,
-            listPharmacy: [],
+            from: 0,
+            size: 10,
+            listProduct: [],
+            outOfData: false,
             show: false,
+            total: 0
         })
     }
 
@@ -46,49 +56,48 @@ const SearchProduct = React.memo(() => {
         }
 
         const params = {
-            offset: state.offset,
-            limit: state.limit,
-            mName: value,
-            adminId: accountInfo.doctor.mId
+            from: state.from,
+            size: state.size,
+            search: value,
         }
 
-        getListPharmacyAsync.execute(params).then(res => {
+        searchProductAsync.execute(params).then(res => {
             setState(prev => ({
                 ...prev,
-                offset: 0,
-                listPharmacy: res,
+                from: 0,
+                listProduct: res.data,
                 show: true,
+                total: res.total,
+                outOfData: res.data.length == 0
             }))
         })
     }, 500)
 
     const handleScroll = (e: any) => {
-        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+        if (state.outOfData) return
+        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight
         const params = {
-            offset: state.offset,
-            limit: state.limit,
-            mName: inputSearch.current.value,
-            adminId: accountInfo.doctor.mId
+            from: state.from + 10,
+            size: state.size,
+            search: inputSearch.current.value,
         }
 
         if (bottom) {
-            getListPharmacyAsync.execute(params).then(res => {
+            searchProductAsync.execute(params).then(res => {
                 setState(prev => ({
                     ...prev,
-                    offset: prev.offset + 10,
-                    listPharmacy: [...prev.listPharmacy, ...res]
+                    from: prev.from + 10,
+                    listProduct: [...prev.listProduct, ...res.data],
+                    total: res.total,
+                    outOfData: res.data.length == 0
                 }))
             })
         }
-    };
-
-    useClickOutside([searchRef], () => {
-        setState(prev => ({ ...prev, show: false }))
-    })
+    }
 
     return <div className='w-100'>
         <Header
-            title="Nhập danh sách nhà thuốc"
+            title="Tìm kiếm sản phẩm"
             subTitle={`Admin ${accountInfo.doctor.mDisplayName}`}
             backTo="/"
         />
@@ -118,24 +127,24 @@ const SearchProduct = React.memo(() => {
                     </form>
                 </div>
                 {
-                    getListPharmacyAsync.status == 'loading' &&
-                    <div className='p-3 d-flex justify-content-center'>
-                        <Loading />
-                    </div>
-                }
-                {
-                    state.show && state.listPharmacy.length != 0 &&
+                    state.show && state.listProduct.length != 0 &&
                     <div className="search-results">
                         <ul onScroll={handleScroll} style={{ maxHeight: "400px", overflowY: "auto" }}>
                             {
-                                state.listPharmacy.map((pharmacy: PharmacyModel) => {
-                                    return <li onClick={() => history.push(`/inventory-of-pharmacy?mPharCode=${pharmacy.mPharCode}&mId=${pharmacy.mId}`)}>
+                                state.listProduct.map((product: ProductModel, index) => {
+                                    return <li onClick={() => history.push(`/update-product?productId=${product._id}`)}>
                                         <a>
-                                            <strong>{pharmacy.mName}</strong><br />
-                                            <small className="txt-gray">{pharmacy.mPharCode}</small>
+                                            <strong>{index}-----{product.name}</strong><br />
+                                            <small className="txt-gray"></small>
                                         </a>
                                     </li>
                                 })
+                            }
+                            {
+                                searchProductAsync.status == 'loading' &&
+                                <li className='p-3 d-flex justify-content-center'>
+                                    <Loading />
+                                </li>
                             }
                         </ul>
                     </div>

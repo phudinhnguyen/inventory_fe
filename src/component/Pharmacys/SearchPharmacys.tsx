@@ -10,7 +10,6 @@ import { debounce, useAsync } from "../../utils"
 import useClickOutside from "../../utils/hooks/useClickOutSide"
 
 const SearchPharmacys = React.memo(() => {
-
     const history = useHistory()
     const searchRef: any = useRef()
     const inputSearch: any = useRef()
@@ -29,6 +28,11 @@ const SearchPharmacys = React.memo(() => {
         listPharmacy: [],
         show: false,
     })
+
+
+    useClickOutside(() => {
+        setState(prev => ({ ...prev, show: false }))
+    }, [searchRef])
 
     const resetState = () => {
         inputSearch.current.value = ''
@@ -82,10 +86,6 @@ const SearchPharmacys = React.memo(() => {
             })
         }
     };
-
-    useClickOutside([searchRef], () => {
-        setState(prev => ({ ...prev, show: false }))
-    })
 
     return <div className='w-100'>
         <Header
