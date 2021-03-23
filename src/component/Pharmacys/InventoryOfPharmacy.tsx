@@ -1,6 +1,7 @@
 import React, { useEffect } from "react"
 import { useRecoilValue } from "recoil"
-import { getDetailPharmacy, getInventoryInPharmacy } from "../../api"
+import { getInventoryInPharmacy } from "../../api"
+import usePharmacy from "../../hooks/pharmacy"
 import { PharmacyDetailModel } from "../../models/pharmacy"
 import { accountDataState } from "../../recoil/account"
 import { useAsync, useQuery } from "../../utils/hooks"
@@ -8,13 +9,14 @@ import { Header } from "../shared"
 
 const InventoryOfPharmacy = React.memo(() => {
     const query = useQuery()
-    const getDetailPharmacyAsync = useAsync<PharmacyDetailModel>(getDetailPharmacy)
+    const { getCurrentDetailPharmacy } = usePharmacy()
+    const getCurrentDetailPharmacyAsync = useAsync<PharmacyDetailModel>(getCurrentDetailPharmacy)
     const getInventoryInPharmacyAsync = useAsync(getInventoryInPharmacy)
 
     const accountInfo = useRecoilValue(accountDataState)
 
     useEffect(() => {
-        getDetailPharmacyAsync.execute({ pharmacyCode: query.get('mPharCode') })
+        getCurrentDetailPharmacyAsync.execute()
     }, [])
 
     useEffect(() => {
@@ -27,12 +29,12 @@ const InventoryOfPharmacy = React.memo(() => {
                 skip: 0,
             }
         })
-    }, [accountInfo.doctor.mId])
+    }, [ accountInfo.doctor.mId ])
 
     return <>
         <Header
-            title={getDetailPharmacyAsync.value?.pharmacy.mName}
-            subTitle={getDetailPharmacyAsync.value?.pharmacyAddress.mAddress}
+            title={getCurrentDetailPharmacyAsync.value?.pharmacy.mName}
+            subTitle={getCurrentDetailPharmacyAsync.value?.pharmacyAddress.mAddress}
             backTo="/search-pharmacys"
         />
         <div id="main">

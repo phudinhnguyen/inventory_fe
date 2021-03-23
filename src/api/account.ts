@@ -1,3 +1,4 @@
+import { CONFIG } from '../config'
 import { DoctorModel, LoginInfoModel } from '../models'
 import client from './base'
 
@@ -15,10 +16,6 @@ export const login = async (payload: ILoginRequest): Promise<LoginInfoModel> => 
             doctor: new DoctorModel(userInfo)
         } as LoginInfoModel
     })
-}
-
-export const CONFIG = {
-    ACCOUNT_INFO_FIELD: "MEDIGO_INVENTORY_ACCOUNT_INFO"
 }
 
 export const setAccountInfo = (accountInfo: LoginInfoModel) => {

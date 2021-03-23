@@ -1,3 +1,17 @@
+interface IDongGoi {
+    id: string
+    don_vi: {
+        name: string,
+        id: string
+    }
+    duoc_ban_le: boolean
+    loai_dong_goi: {
+        name: string,
+        id: string
+    }
+    so_luong: number
+}
+
 export class ProductModel {
     _id: string
     ah_co_thai_cho_con_bu: string
@@ -26,6 +40,7 @@ export class ProductModel {
     nhom_san_pham: any
     phan_loai_san_pham: string
     phan_loais: Array<any>
+    dong_goi: Array<IDongGoi>
     quy_cach_dong_goi: Array<any>
 
     constructor(product?: any) {
@@ -57,5 +72,6 @@ export class ProductModel {
         this.phan_loai_san_pham = product?.phan_loai_san_pham || ''
         this.phan_loais = product?.phan_loais || ''
         this.quy_cach_dong_goi = product?.quy_cach_dong_goi || ''
+        this.dong_goi = product?.dong_goi || []
     }
 }

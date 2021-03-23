@@ -7,19 +7,7 @@ export type ISearchProduct = {
     size: number
 }
 
-export const searchProduct = async (params: ISearchProduct) => {
-    const { search, from, size } = params
-
-    const query = {
-        from,
-        size,
-        query: {
-            match: {
-                name: search
-            },
-        }
-    }
-
+export const searchProduct = async (query: any) => {
     return await client.get(
         `https://s-dev.medigoapp.com/product/_search`,
         {

@@ -1,23 +1,24 @@
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Header } from "../shared"
-import { searchProduct } from '../../api'
+import { ISearchProduct, searchProduct } from '../../api'
 import Loading from "../shared/Loading"
 import { useHistory } from "react-router"
 import { useRecoilValue } from "recoil"
-import { accountDataState } from "../../recoil/account"
 import { debounce, useAsync } from "../../utils"
 import useClickOutside from "../../utils/hooks/useClickOutSide"
-import { ProductModel } from "../../models"
+import { PharmacyDetailModel, ProductModel } from "../../models"
+import usePharmacy from "../../hooks/pharmacy"
 
 const SearchProduct = React.memo(() => {
     const history = useHistory()
     const searchRef: any = useRef()
     const inputSearch: any = useRef()
 
+    const { getCurrentDetailPharmacy } = usePharmacy()
+    const getCurrentDetailPharmacyAsync = useAsync<PharmacyDetailModel>(getCurrentDetailPharmacy)
     const searchProductAsync = useAsync(searchProduct)
 
-    const accountInfo = useRecoilValue(accountDataState)
-    const [state, setState] = useState<{
+    const [ state, setState ] = useState<{
         from: number,
         size: number,
         listProduct: Array<ProductModel>,
@@ -33,9 +34,25 @@ const SearchProduct = React.memo(() => {
         total: 0,
     })
 
+    useEffect(() => {
+        getCurrentDetailPharmacyAsync.execute()
+    }, [])
+
     useClickOutside(() => {
         setState(prev => ({ ...prev, show: false }))
-    }, [searchRef])
+    }, [ searchRef ])
+
+    const getQuery = ({ search, from, size }: ISearchProduct) => {
+        return {
+            from,
+            size,
+            query: {
+                match: {
+                    name: search
+                },
+            }
+        }
+    }
 
     const resetState = () => {
         inputSearch.current.value = ''
@@ -61,7 +78,7 @@ const SearchProduct = React.memo(() => {
             search: value,
         }
 
-        searchProductAsync.execute(params).then(res => {
+        searchProductAsync.execute(getQuery(params)).then(res => {
             setState(prev => ({
                 ...prev,
                 from: 0,
@@ -83,11 +100,11 @@ const SearchProduct = React.memo(() => {
         }
 
         if (bottom) {
-            searchProductAsync.execute(params).then(res => {
+            searchProductAsync.execute(getQuery(params)).then(res => {
                 setState(prev => ({
                     ...prev,
                     from: prev.from + 10,
-                    listProduct: [...prev.listProduct, ...res.data],
+                    listProduct: [ ...prev.listProduct, ...res.data ],
                     total: res.total,
                     outOfData: res.data.length == 0
                 }))
@@ -98,7 +115,7 @@ const SearchProduct = React.memo(() => {
     return <div className='w-100'>
         <Header
             title="Tìm kiếm sản phẩm"
-            subTitle={`Admin ${accountInfo.doctor.mDisplayName}`}
+            subTitle={getCurrentDetailPharmacyAsync.value?.pharmacy?.mName}
             backTo="/"
         />
         <div id="main">
@@ -132,9 +149,9 @@ const SearchProduct = React.memo(() => {
                         <ul onScroll={handleScroll} style={{ maxHeight: "400px", overflowY: "auto" }}>
                             {
                                 state.listProduct.map((product: ProductModel, index) => {
-                                    return <li onClick={() => history.push(`/update-product?productId=${product._id}`)}>
+                                    return <li onClick={() => history.push(`/update-product?productId=${ product._id }`)}>
                                         <a>
-                                            <strong>{index}-----{product.name}</strong><br />
+                                            <strong>{product.name}</strong><br />
                                             <small className="txt-gray"></small>
                                         </a>
                                     </li>

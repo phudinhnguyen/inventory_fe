@@ -21,6 +21,6 @@ const App: React.FC = React.memo(() => {
     }
 
     return <Account />
-});
+})
 
 export default App;

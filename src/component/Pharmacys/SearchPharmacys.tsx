@@ -8,16 +8,18 @@ import { useRecoilValue } from "recoil"
 import { accountDataState } from "../../recoil/account"
 import { debounce, useAsync } from "../../utils"
 import useClickOutside from "../../utils/hooks/useClickOutSide"
+import usePharmacy from "../../hooks/pharmacy"
 
 const SearchPharmacys = React.memo(() => {
     const history = useHistory()
     const searchRef: any = useRef()
     const inputSearch: any = useRef()
 
+    const { setCurrentPharmacy } = usePharmacy()
     const getListPharmacyAsync = useAsync<Array<PharmacyModel>>(getListPharmacy)
 
     const accountInfo = useRecoilValue(accountDataState)
-    const [state, setState] = useState<{
+    const [ state, setState ] = useState<{
         offset: number,
         limit: number,
         listPharmacy: Array<PharmacyModel>,
@@ -32,7 +34,7 @@ const SearchPharmacys = React.memo(() => {
 
     useClickOutside(() => {
         setState(prev => ({ ...prev, show: false }))
-    }, [searchRef])
+    }, [ searchRef ])
 
     const resetState = () => {
         inputSearch.current.value = ''
@@ -81,7 +83,7 @@ const SearchPharmacys = React.memo(() => {
                 setState(prev => ({
                     ...prev,
                     offset: prev.offset + 10,
-                    listPharmacy: [...prev.listPharmacy, ...res]
+                    listPharmacy: [ ...prev.listPharmacy, ...res ]
                 }))
             })
         }
@@ -89,8 +91,8 @@ const SearchPharmacys = React.memo(() => {
 
     return <div className='w-100'>
         <Header
-            title="Nhập danh sách nhà thuốc"
-            subTitle={`Admin ${accountInfo.doctor.mDisplayName}`}
+            title="Tìm nhà thuốc"
+            subTitle={`Admin ${ accountInfo.doctor.mDisplayName }`}
             backTo="/"
         />
         <div id="main">
@@ -124,7 +126,13 @@ const SearchPharmacys = React.memo(() => {
                         <ul onScroll={handleScroll} style={{ maxHeight: "400px", overflowY: "auto" }}>
                             {
                                 state.listPharmacy.map((pharmacy: PharmacyModel) => {
-                                    return <li onClick={() => history.push(`/inventory-of-pharmacy?mPharCode=${pharmacy.mPharCode}&mId=${pharmacy.mId}`)}>
+                                    return <li onClick={() => {
+                                        history.push(`/inventory-of-pharmacy`)
+                                        setCurrentPharmacy({
+                                            pharmacyCode: pharmacy.mPharCode,
+                                            pharmacyId: pharmacy.mId,
+                                        })
+                                    }}>
                                         <a>
                                             <strong>{pharmacy.mName}</strong><br />
                                             <small className="txt-gray">{pharmacy.mPharCode}</small>

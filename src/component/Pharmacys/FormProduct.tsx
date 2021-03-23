@@ -1,25 +1,53 @@
-import React from "react"
+import React, { useEffect, useMemo } from "react"
 import { Header } from "../shared"
-import Loading from "../shared/Loading"
-import { useHistory } from "react-router"
+import usePharmacy from "../../hooks/pharmacy"
+import { useAsync, useQuery } from "../../utils"
+import { PharmacyDetailModel, ProductModel } from "../../models"
+import { searchProduct } from "../../api"
 
 const FormProduct = React.memo(() => {
-    const history = useHistory()
+
+    const query = useQuery()
+    const productId: string = query.get('productId') || ''
+
+    const { getCurrentDetailPharmacy } = usePharmacy()
+    const getCurrentDetailPharmacyAsync = useAsync<PharmacyDetailModel>(getCurrentDetailPharmacy)
+    const searchProductAsync = useAsync(searchProduct)
+
+    useEffect(() => {
+        getCurrentDetailPharmacyAsync.execute()
+        searchProductAsync.execute(getQuery(productId))
+    }, [])
+
+    const getQuery = (productId: string) => {
+        return {
+            query: {
+                match: {
+                    _id: productId
+                },
+            }
+        }
+    }
+
+    const product: ProductModel = useMemo(() => {
+        if (!searchProductAsync.value) return new ProductModel({})
+        return searchProductAsync.value.data[ 0 ]
+    }, [ searchProductAsync.value ])
 
     return <div className='w-100'>
         <Header
-            title="NT Bình An"
-            subTitle={`2 Lê Duẫn, P.1, Q.1, Đà Nẵng`}
-            backTo="/"
+            title="Cập nhật sản phẩm"
+            subTitle={getCurrentDetailPharmacyAsync.value?.pharmacy?.mName}
+            backTo="/search-product"
         />
 
         <div id="main">
             <div className="container">
                 <div className="d-flex align-items-center product-summary">
                     <div className="product-thumb">
-                        <img src="./images/demo.png" className="img-fluid" />
+                        <img src={product.imageUrls[ 0 ]} className="img-fluid" />
                     </div>
-                    <strong>Panadol Extra hôp 100 viên</strong>
+                    <strong>{product.name}</strong>
                 </div>
                 <div className="row">
                     <div className="spacing" />

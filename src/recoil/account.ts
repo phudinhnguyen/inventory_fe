@@ -1,6 +1,5 @@
 import {
     atom,
-    selectorFamily
 } from 'recoil';
 import { LoginInfoModel } from '../models'
 
