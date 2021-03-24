@@ -15,6 +15,10 @@ interface IDongGoi {
 export class ProductModel {
     _id: string
     ah_co_thai_cho_con_bu: string
+    mPkgName: string
+    mPrice: number
+    mStockAmount: number
+    mStatus: string
     ah_lai_xe: string
     bao_quan: string
     chong_chi_dinh: string
@@ -27,7 +31,6 @@ export class ProductModel {
     tuong_tac_thuoc: string
     phan_loai: string
     cong_dung_chi_dinh: string
-    id: string
     sku_id: string
     imageUrls: Array<string>
     khoi_luong_the_tich: string
@@ -46,6 +49,10 @@ export class ProductModel {
     constructor(product?: any) {
         this._id = product?._id || ''
         this.ah_co_thai_cho_con_bu = product?.ah_co_thai_cho_con_bu || ''
+        this.mPkgName = product?.mPkgName || ''
+        this.mStatus = product?.mStatus || ''
+        this.mPrice = product?.mPrice || 0
+        this.mStockAmount = product?.mStockAmount || 0
         this.ah_lai_xe = product?.ah_lai_xe || ''
         this.bao_quan = product?.bao_quan || ''
         this.chong_chi_dinh = product?.chong_chi_dinh || ''
@@ -60,7 +67,6 @@ export class ProductModel {
         this.nhom_san_pham = product?.nhom_san_pham || ''
         this.cong_dung_chi_dinh = product?.cong_dung_chi_dinh || ''
         this.lieu_luong_cach_dung = product?.lieu_luong_cach_dung || ''
-        this.id = product?.id || ''
         this.sku_id = product?.sku_id || ''
         this.imageUrls = product?.imageUrls || []
         this.khoi_luong_the_tich = product?.khoi_luong_the_tich || ''

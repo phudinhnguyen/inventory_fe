@@ -32,8 +32,13 @@ const FormProduct = React.memo(() => {
         getInventoryInPharmacyAsync.execute({
             adminId,
             pharmacyId,
+            filter: {
+                where: {
+                    mProductId: productId,
+                }
+            }
         })
-    }, [ accountInfo, getCurrentDetailPharmacyAsync.value ])
+    }, [accountInfo, getCurrentDetailPharmacyAsync.value])
 
     const getQuery = (productId: string) => {
         return {
@@ -47,8 +52,8 @@ const FormProduct = React.memo(() => {
 
     const product: ProductModel = useMemo(() => {
         if (!searchProductAsync.value) return new ProductModel({})
-        return searchProductAsync.value.data[ 0 ]
-    }, [ searchProductAsync.value ])
+        return searchProductAsync.value.data[0]
+    }, [searchProductAsync.value])
 
     return <div className='w-100'>
         <Header
@@ -61,7 +66,7 @@ const FormProduct = React.memo(() => {
             <div className="container">
                 <div className="d-flex align-items-center product-summary">
                     <div className="product-thumb">
-                        <img src={product.imageUrls[ 0 ]} className="img-fluid" />
+                        <img src={product.imageUrls[0]} className="img-fluid" />
                     </div>
                     <strong>{product.name}</strong>
                 </div>

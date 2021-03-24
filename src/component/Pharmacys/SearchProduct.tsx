@@ -17,7 +17,7 @@ const SearchProduct = React.memo(() => {
     const getCurrentDetailPharmacyAsync = useAsync<PharmacyDetailModel>(getCurrentDetailPharmacy)
     const searchProductAsync = useAsync(searchProduct)
 
-    const [ state, setState ] = useState<{
+    const [state, setState] = useState<{
         from: number,
         size: number,
         listProduct: Array<ProductModel>,
@@ -39,7 +39,7 @@ const SearchProduct = React.memo(() => {
 
     useClickOutside(() => {
         setState(prev => ({ ...prev, show: false }))
-    }, [ searchRef ])
+    }, [searchRef])
 
     const getQuery = ({ search, from, size }: ISearchProduct) => {
         return {
@@ -103,7 +103,7 @@ const SearchProduct = React.memo(() => {
                 setState(prev => ({
                     ...prev,
                     from: prev.from + 10,
-                    listProduct: [ ...prev.listProduct, ...res.data ],
+                    listProduct: [...prev.listProduct, ...res.data],
                     total: res.total,
                     outOfData: res.data.length == 0
                 }))
@@ -115,7 +115,7 @@ const SearchProduct = React.memo(() => {
         <Header
             title="Tìm kiếm sản phẩm"
             subTitle={getCurrentDetailPharmacyAsync.value?.pharmacy?.mName}
-            backTo="/"
+            backTo="/inventory-of-pharmacy"
         />
         <div id="main">
             <div className="container" ref={searchRef}>
@@ -126,7 +126,7 @@ const SearchProduct = React.memo(() => {
                             onClick={() => setState(prev => ({ ...prev, show: true }))}
                             type="text"
                             name="search"
-                            placeholder="Tên theo tên thuốc"
+                            placeholder="Tìm kiếm theo tên thuốc"
                             className="input-search"
                             onChange={(e => {
                                 e.preventDefault()
@@ -148,7 +148,7 @@ const SearchProduct = React.memo(() => {
                         <ul onScroll={handleScroll} style={{ maxHeight: "400px", overflowY: "auto" }}>
                             {
                                 state.listProduct.map((product: ProductModel, index) => {
-                                    return <li onClick={() => history.push(`/update-product?productId=${ product._id }`)}>
+                                    return <li onClick={() => history.push(`/update-product?productId=${product._id}`)}>
                                         <a>
                                             <strong>{product.name}</strong><br />
                                             <small className="txt-gray"></small>

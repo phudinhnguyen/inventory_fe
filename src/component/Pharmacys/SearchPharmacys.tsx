@@ -19,7 +19,7 @@ const SearchPharmacys = React.memo(() => {
     const getListPharmacyAsync = useAsync<Array<PharmacyModel>>(getListPharmacy)
 
     const accountInfo = useRecoilValue(accountDataState)
-    const [ state, setState ] = useState<{
+    const [state, setState] = useState<{
         offset: number,
         limit: number,
         listPharmacy: Array<PharmacyModel>,
@@ -34,7 +34,7 @@ const SearchPharmacys = React.memo(() => {
 
     useClickOutside(() => {
         setState(prev => ({ ...prev, show: false }))
-    }, [ searchRef ])
+    }, [searchRef])
 
     const resetState = () => {
         inputSearch.current.value = ''
@@ -83,7 +83,7 @@ const SearchPharmacys = React.memo(() => {
                 setState(prev => ({
                     ...prev,
                     offset: prev.offset + 10,
-                    listPharmacy: [ ...prev.listPharmacy, ...res ]
+                    listPharmacy: [...prev.listPharmacy, ...res]
                 }))
             })
         }
@@ -92,7 +92,7 @@ const SearchPharmacys = React.memo(() => {
     return <div className='w-100'>
         <Header
             title="Tìm nhà thuốc"
-            subTitle={`Admin ${ accountInfo.doctor.mDisplayName }`}
+            subTitle={`Admin ${accountInfo.doctor.mDisplayName}`}
             backTo="/"
         />
         <div id="main">
@@ -134,7 +134,7 @@ const SearchPharmacys = React.memo(() => {
                                         })
                                     }}>
                                         <a>
-                                            <strong>{pharmacy.mName}</strong><br />
+                                            <strong>{pharmacy.mName}-----{pharmacy.mId}</strong><br />
                                             <small className="txt-gray">{pharmacy.mPharCode}</small>
                                         </a>
                                     </li>

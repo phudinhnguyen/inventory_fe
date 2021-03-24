@@ -1,3 +1,4 @@
+import { ProductModel } from "../models"
 import client from "./base"
 
 export type IGetInventoryItems = {
@@ -11,18 +12,6 @@ export type IGetInventoryItems = {
         where?: {
             additionalProp1: {}
         },
-        fields?: {
-            mId?: string
-            mCreated?: string
-            mModified?: string
-            mStatus?: string
-            mPharmacyId?: string
-            mProductId?: string
-            mPrice?: string
-            mStockAmount?: string
-            mPackageId?: string
-            mEsModified?: string
-        }
     }
 }
 
@@ -30,9 +19,19 @@ export const getInventoryInPharmacy = async (params: IGetInventoryItems) => {
     const { pharmacyId, adminId, filter } = params
 
     return await client.get(
-        `http://dev-pharmacy-inventory-api.medigo.xyz/pis/inventory-management/admins/${ adminId }/pharmacies/${ pharmacyId }/inventory-items`,
+        `http://dev-pharmacy-inventory-api.medigo.xyz/pis/inventory-management/admins/${adminId}/pharmacies/${pharmacyId}/inventory-items`,
         { params: { filter } }
-    )
+    ).then(res => {
+        return res.data?.map((product: any) => {
+            return {
+                ...new ProductModel({
+                    ...product,
+                    _id: product.mProductId,
+                    name: product.mProductName
+                })
+            }
+        })
+    })
 
     // return await client.get(
     //     `http://dev-pharmacy-inventory-api.medigo.xyz/pis/inventory-management/pharmacies/${pharmacyId}/inventory-items?filter=%7B%0A%20%20%22limit%22%3A%2010%2C%0A%20%20%22skip%22%3A%200%2C%0A%20%20%22where%22%3A%20%7B%0A%20%20%20%20%22mProductId%22%3A%20%226040c505ba6295400a17bf57%22%0A%20%20%7D%0A%7D`
