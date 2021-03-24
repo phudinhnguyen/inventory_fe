@@ -3,7 +3,6 @@ import { Header } from "../shared"
 import { ISearchProduct, searchProduct } from '../../api'
 import Loading from "../shared/Loading"
 import { useHistory } from "react-router"
-import { useRecoilValue } from "recoil"
 import { debounce, useAsync } from "../../utils"
 import useClickOutside from "../../utils/hooks/useClickOutSide"
 import { PharmacyDetailModel, ProductModel } from "../../models"

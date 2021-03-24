@@ -3,7 +3,9 @@ import { Header } from "../shared"
 import usePharmacy from "../../hooks/pharmacy"
 import { useAsync, useQuery } from "../../utils"
 import { PharmacyDetailModel, ProductModel } from "../../models"
-import { searchProduct } from "../../api"
+import { getInventoryInPharmacy, searchProduct } from "../../api"
+import { useRecoilValue } from "recoil"
+import { accountDataState } from "../../recoil/account"
 
 const FormProduct = React.memo(() => {
 
@@ -12,12 +14,26 @@ const FormProduct = React.memo(() => {
 
     const { getCurrentDetailPharmacy } = usePharmacy()
     const getCurrentDetailPharmacyAsync = useAsync<PharmacyDetailModel>(getCurrentDetailPharmacy)
+    const getInventoryInPharmacyAsync = useAsync(getInventoryInPharmacy)
     const searchProductAsync = useAsync(searchProduct)
+
+    const accountInfo = useRecoilValue(accountDataState)
 
     useEffect(() => {
         getCurrentDetailPharmacyAsync.execute()
         searchProductAsync.execute(getQuery(productId))
     }, [])
+
+    useEffect(() => {
+        const pharmacyId = getCurrentDetailPharmacyAsync.value?.pharmacy?.mId
+        const adminId = accountInfo?.loginSession?.mUserId
+
+        if (!pharmacyId || !adminId) return
+        getInventoryInPharmacyAsync.execute({
+            adminId,
+            pharmacyId,
+        })
+    }, [ accountInfo, getCurrentDetailPharmacyAsync.value ])
 
     const getQuery = (productId: string) => {
         return {

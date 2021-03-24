@@ -30,7 +30,7 @@ export const getInventoryInPharmacy = async (params: IGetInventoryItems) => {
     const { pharmacyId, adminId, filter } = params
 
     return await client.get(
-        `http://dev-pharmacy-inventory-api.medigo.xyz/pis/inventory-management/admins/${adminId}/pharmacies/${pharmacyId}/inventory-items`,
+        `http://dev-pharmacy-inventory-api.medigo.xyz/pis/inventory-management/admins/${ adminId }/pharmacies/${ pharmacyId }/inventory-items`,
         { params: { filter } }
     )
 
@@ -59,6 +59,6 @@ export type IUpdatePharmacyInventoryItemsRequest = {
 export const updatePharmacyInventoryItems = async (payload: IUpdatePharmacyInventoryItemsRequest) => {
     return await client.post(
         `http://dev-pharmacy-inventory-api.medigo.xyz/pis/inventory-management/admins/123123/pharmacies/123123/inventory-items/batch`,
-        payload,
+        payload.inventoryItems,
     )
 }

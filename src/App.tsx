@@ -19,8 +19,7 @@ const App: React.FC = React.memo(() => {
     if (accountDataState.loginSession?.mToken) {
         return <Pharmacys />
     }
-
     return <Account />
-})
+});
 
-export default App;
+export default App

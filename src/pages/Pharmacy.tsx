@@ -4,14 +4,6 @@ import { getAccountInfo } from "../api"
 import { FormProduct, InventoryOfPharmacy, SearchPharmacys, SearchProduct } from "../component/Pharmacys"
 
 const Pharmacys: React.FC = React.memo(() => {
-    const history = useHistory()
-
-    useEffect(() => {
-        const accountInfo = getAccountInfo()
-        if (!accountInfo.loginSession.mToken) {
-            history.push('/login')
-        }
-    })
 
     return <Switch>
         <Route exact={true} path="/" component={() => <Redirect to="/search-pharmacys" />} />
