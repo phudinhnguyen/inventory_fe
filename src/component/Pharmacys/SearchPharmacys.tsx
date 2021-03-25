@@ -134,7 +134,7 @@ const SearchPharmacys = React.memo(() => {
                                         })
                                     }}>
                                         <a>
-                                            <strong>{pharmacy.mName}-----{pharmacy.mId}</strong><br />
+                                            <strong>{pharmacy.mName}</strong><br />
                                             <small className="txt-gray">{pharmacy.mPharCode}</small>
                                         </a>
                                     </li>

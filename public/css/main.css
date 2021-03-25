@@ -413,6 +413,12 @@ textarea.form-control {
   border-color: #1E1E1E;
 }
 
+.btn-border {
+  color: #F35353 !important;
+  border-color: #F35353;
+  background-color: #ffffff;
+  line-height: 24px; }
+
 .modal.show .modal-dialog {
   margin-top: 30vh;
   margin-bottom: 0;
