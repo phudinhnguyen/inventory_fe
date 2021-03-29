@@ -126,11 +126,6 @@ header .page-title small {
   font-size: 13px;
   line-height: 15px;
   font-weight: 300;
-  display: inline-block;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 header .navbar-toggler {

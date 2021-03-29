@@ -6,7 +6,7 @@ import { useHistory } from "react-router"
 import { useRecoilValue } from "recoil"
 import { getInventoryInPharmacy, getPharmacyInfoLocal } from "../../api"
 import usePharmacy from "../../hooks/pharmacy"
-import { InventoryModel, ProductModel } from "../../models"
+import { InventoryModel } from "../../models"
 import { PharmacyDetailModel } from "../../models/pharmacy"
 import { accountDataState } from "../../recoil/account"
 import { debounce } from "../../utils"
@@ -100,6 +100,7 @@ const InventoryOfPharmacy = React.memo(() => {
             backTo="/search-pharmacys"
         />
         <div id="main" style={{ width: "100%" }}>
+
             <div className="container">
                 <p className="mt-3 mb-3">
                     <a onClick={() => history.push('search-product')} className="btn btn-block btn-border" title="THÊM SẢN PHẨM MỚI">
@@ -111,73 +112,86 @@ const InventoryOfPharmacy = React.memo(() => {
                 <div className="row">
                     <div className="spacing" />
                 </div>
-                <div className="mt-3">
-                    <div className="d-flex py-3 justify-content-center align-items-center">
-                        <p className="m-0">NT đang có {getInventoryInPharmacyAsync.value?.length} sản phẩm</p>
-                    </div>
-                    <div className="form-search">
-                        <form id="search">
-                            <input
-                                ref={inputSearch}
-                                onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-                                onChange={(e) => {
-                                    const { value } = e.target
-                                    handleChange(value)
-                                    inputSearch.current.value = value
-                                }} type="text" name="search" placeholder="Tìm kiếm theo tên thuốc" className="input-search" />
-                            <a
-                                id="btn-search-clear"
-                                onClick={() => {
-                                    inputSearch.current.value = ''
-                                    setState(initState)
-                                    getInitData()
-                                }}
-                            >
-                                <img src="./images/cancel.svg" title="Xóa" className="img-fluid" width={24} alt='' />
-                            </a>
-                            <button type="button" className="btn-search">
-                                <img src="./images/search.svg" title="Tìm kiếm" className="img-fluid" width={24} />
-                            </button>
-                        </form>
-                    </div>
-                    <div className="d-flex justify-content-between mb-3">
-                        <label className="mt-2">Sắp xếp theo</label>
-                        <select className="sort-by">
-                            <option>Ngày cập nhật</option>
-                            <option>Bán chạy</option>
-                            <option>Example</option>
-                            <option>Example 2</option>
-                            <option>Example 3</option>
-                        </select>
-                    </div>
 
-                    <div className="row">
-                        <div className="table-products">
-                            <table className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Tên</th>
-                                        <th scope="col" style={{ width: 70 }}>Đơn vị</th>
-                                        <th scope="col" style={{ width: 90 }}>Số lượng</th>
-                                        <th scope="col" style={{ width: 80 }}>ĐƠN GIÁ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        state.listProduct?.map((product: InventoryModel) => {
-                                            return <tr>
-                                                <td>{product.mProductName}</td>
-                                                <td>{product.mPkgName}</td>
-                                                <td>{product.mStockAmount}</td>
-                                                <td className="price">{product.mPrice}</td>
-                                            </tr>
-                                        })
-                                    }
-                                </tbody>
-                            </table>
+                {
+                    state.listProduct.length === 0 &&
+                    <div className="d-flex py-3 justify-content-center align-items-center">
+                        <p className="m-0">Nhà thuốc chưa có sản phẩm nào</p>
+                    </div>
+                }
+
+
+                {
+                    state.listProduct.length !== 0 &&
+
+                    <div className="mt-3">
+                        <div className="d-flex py-1 justify-content-center align-items-center">
+                            <p className="m-0">NT đang có {getInventoryInPharmacyAsync.value?.length} sản phẩm</p>
+                        </div>
+                        <div className="form-search">
+                            <form id="search">
+                                <input
+                                    ref={inputSearch}
+                                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                                    onChange={(e) => {
+                                        const { value } = e.target
+                                        handleChange(value)
+                                        inputSearch.current.value = value
+                                    }} type="text" name="search" placeholder="Tìm kiếm theo tên thuốc" className="input-search" />
+                                <a
+                                    id="btn-search-clear"
+                                    onClick={() => {
+                                        inputSearch.current.value = ''
+                                        setState(initState)
+                                        getInitData()
+                                    }}
+                                >
+                                    <img src="./images/cancel.svg" title="Xóa" className="img-fluid" width={24} alt='' />
+                                </a>
+                                <button type="button" className="btn-search">
+                                    <img src="./images/search.svg" title="Tìm kiếm" className="img-fluid" width={24} />
+                                </button>
+                            </form>
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                            <label className="mt-2">Sắp xếp theo</label>
+                            <select className="sort-by">
+                                <option>Ngày cập nhật</option>
+                                <option>Bán chạy</option>
+                                <option>Example</option>
+                                <option>Example 2</option>
+                                <option>Example 3</option>
+                            </select>
+                        </div>
+
+                        <div className="row">
+                            <div className="table-products">
+                                <table className="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Tên</th>
+                                            <th scope="col" style={{ width: 70 }}>Đơn vị</th>
+                                            <th scope="col" style={{ width: 90 }}>Số lượng</th>
+                                            <th scope="col" style={{ width: 80 }}>ĐƠN GIÁ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            state.listProduct?.map((product: InventoryModel) => {
+                                                return <tr>
+                                                    <td>{product.mProductName}</td>
+                                                    <td>{product.mPkgName}</td>
+                                                    <td>{product.mStockAmount}</td>
+                                                    <td className="price">{product.mPrice}</td>
+                                                </tr>
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </>
