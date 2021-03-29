@@ -1,4 +1,4 @@
-import { getDetailPharmacy } from "../api"
+import { getDetailPharmacy, getPharmacyInfoLocal } from "../api"
 import { CONFIG } from "../config"
 
 interface IPharmacyLocalInfo {
@@ -9,8 +9,7 @@ interface IPharmacyLocalInfo {
 const usePharmacy = () => {
     return {
         getCurrentDetailPharmacy: async () => {
-            const jsonPharmacyInfo: any = localStorage.getItem(CONFIG.PHARMACY_INFO)
-            const { pharmacyCode }: any = JSON.parse(jsonPharmacyInfo)
+            const { pharmacyCode }: any = getPharmacyInfoLocal()
 
             return await getDetailPharmacy({ pharmacyCode }).then(res => {
                 return res

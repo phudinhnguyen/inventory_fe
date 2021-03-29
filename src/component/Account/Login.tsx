@@ -1,6 +1,7 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React from "react"
-import { Form } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
+import { Form } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { emailRegExp } from "../../utils";
@@ -95,8 +96,9 @@ const Login = React.memo(() => {
                             <p className="text-right">
                             </p>
                             <Button
-                                className="btn btn-block"
                                 type="submit"
+                                text='Đăng nhập'
+                                loading={loginAsync.status === 'loading'}
                             />
                         </Form>
                     }

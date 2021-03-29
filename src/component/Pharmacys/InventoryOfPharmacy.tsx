@@ -4,9 +4,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useHistory } from "react-router"
 import { useRecoilValue } from "recoil"
-import { getInventoryInPharmacy } from "../../api"
+import { getInventoryInPharmacy, getPharmacyInfoLocal } from "../../api"
 import usePharmacy from "../../hooks/pharmacy"
-import { ProductModel } from "../../models"
+import { InventoryModel, ProductModel } from "../../models"
 import { PharmacyDetailModel } from "../../models/pharmacy"
 import { accountDataState } from "../../recoil/account"
 import { debounce } from "../../utils"
@@ -16,7 +16,7 @@ import { Header } from "../shared"
 interface IState {
     skip: number,
     limit: number,
-    listProduct: Array<ProductModel>,
+    listProduct: Array<InventoryModel>,
     total?: number,
 }
 
@@ -44,7 +44,12 @@ const InventoryOfPharmacy = React.memo(() => {
     const inputSearch: any = useRef()
 
     useEffect(() => {
-        getCurrentDetailPharmacyAsync.execute()
+        const pharmacyInfo = getPharmacyInfoLocal()
+        if (pharmacyInfo) {
+            getCurrentDetailPharmacyAsync.execute()
+        } else {
+            history.push('/search-pharmacys')
+        }
     }, [])
 
     useEffect(() => {
@@ -66,6 +71,11 @@ const InventoryOfPharmacy = React.memo(() => {
     }
 
     const handleChange = debounce((value: string) => {
+        if (value === '') {
+            getInitData()
+            return
+        }
+
         getInventoryInPharmacyAsync.execute({
             pharmacyId,
             adminId: accountInfo.doctor.mId,
@@ -95,7 +105,7 @@ const InventoryOfPharmacy = React.memo(() => {
                     <a onClick={() => history.push('search-product')} className="btn btn-block btn-border" title="THÊM SẢN PHẨM MỚI">
                         <img src="./images/add_circle.svg" title="Add" className="img-fluid" width={24} />
                             THÊM SẢN PHẨM MỚI
-                        </a>
+                    </a>
                 </p>
 
                 <div className="row">
@@ -154,10 +164,10 @@ const InventoryOfPharmacy = React.memo(() => {
                                 </thead>
                                 <tbody>
                                     {
-                                        state.listProduct?.map((product: ProductModel) => {
+                                        state.listProduct?.map((product: InventoryModel) => {
                                             return <tr>
-                                                <td>{product.name}</td>
-                                                <td>{product.mPrice}</td>
+                                                <td>{product.mProductName}</td>
+                                                <td>{product.mPkgName}</td>
                                                 <td>{product.mStockAmount}</td>
                                                 <td className="price">{product.mPrice}</td>
                                             </tr>

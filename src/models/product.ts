@@ -1,4 +1,6 @@
-interface IDongGoi {
+import { InventoryModel } from "./inventory"
+
+export interface IDongGoi {
     id: string
     don_vi: {
         name: string,
@@ -10,6 +12,7 @@ interface IDongGoi {
         id: string
     }
     so_luong: number
+    inventory?: InventoryModel
 }
 
 export class ProductModel {

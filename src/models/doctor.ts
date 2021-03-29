@@ -11,8 +11,9 @@ export class DoctorModel {
     mRefCode: string
     mCreated?: string
     mModified?: string
+    mRole: "ASSISTANT"
 
-    constructor(doctor: DoctorModel) {
+    constructor(doctor: any) {
         this.mId = doctor.mId || ''
         this.mStatus = doctor.mStatus || ''
         this.mEmail = doctor.mEmail || ''
@@ -25,5 +26,6 @@ export class DoctorModel {
         this.mRefCode = doctor.mRefCode || ''
         this.mCreated = doctor.mCreated || ''
         this.mModified = doctor.mModified || ''
+        this.mRole = doctor.mRole || ''
     }
 }

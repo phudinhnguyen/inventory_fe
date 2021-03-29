@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { getAccountInfo } from './account';
 
-const client = axios.create({
-    baseURL: process.env.REACT_APP_API_URL
-});
+const client = axios.create();
 
 client.interceptors.request.use(config => {
     const accountInfo = getAccountInfo()

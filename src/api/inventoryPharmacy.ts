@@ -1,4 +1,4 @@
-import { ProductModel } from "../models"
+import { InventoryModel } from "../models"
 import client from "./base"
 
 export type IGetInventoryItems = {
@@ -24,7 +24,7 @@ export const getInventoryInPharmacy = async (params: IGetInventoryItems) => {
     ).then(res => {
         return res.data?.map((product: any) => {
             return {
-                ...new ProductModel({
+                ...new InventoryModel({
                     ...product,
                     _id: product.mProductId,
                     name: product.mProductName
@@ -38,26 +38,30 @@ export const getInventoryInPharmacy = async (params: IGetInventoryItems) => {
     // )
 }
 
-export type IUpdatePharmacyInventoryItemsRequest = {
+export type IUpdatePharmacyInventoryRequest = {
     adminId: string,
     pharmacyId: string,
-    inventoryItems: Array<{
-        mId: number
-        mCreated: string
-        mModified: string
-        mStatus: string
-        mPharmacyId: number
-        mProductId: string
-        mPrice: number
-        mStockAmount: number
-        mPackageId: string
-        mEsModified: string
+    listInventory: Array<{
+        mId?: number;
+        mCreated?: Date;
+        mModified?: Date;
+        mStatus?: string;
+        mPharmacyId?: number;
+        mProductId?: string;
+        mPrice?: number;
+        mStockAmount?: number;
+        mPackageId?: string;
+        mEsModified?: Date;
+        mProductName?: string;
+        mPkgName?: string;
     }>
 }
 
-export const updatePharmacyInventoryItems = async (payload: IUpdatePharmacyInventoryItemsRequest) => {
+export const updatePharmacyInventory = async (payload: IUpdatePharmacyInventoryRequest) => {
+    const { adminId, pharmacyId } = payload
+
     return await client.post(
-        `http://dev-pharmacy-inventory-api.medigo.xyz/pis/inventory-management/admins/123123/pharmacies/123123/inventory-items/batch`,
-        payload.inventoryItems,
+        `http://dev-pharmacy-inventory-api.medigo.xyz/pis/inventory-management/admins/${adminId}/pharmacies/${pharmacyId}/inventory-items/batch`,
+        payload.listInventory,
     )
 }

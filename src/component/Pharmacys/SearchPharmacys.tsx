@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/alt-text */
 import React, { useRef, useState } from "react"
 import { Header } from "../shared"
 import { getListPharmacy } from '../../api'
@@ -20,14 +22,16 @@ const SearchPharmacys = React.memo(() => {
 
     const accountInfo = useRecoilValue(accountDataState)
     const [state, setState] = useState<{
-        offset: number,
+        skip: number,
         limit: number,
         listPharmacy: Array<PharmacyModel>,
+        outOfData: boolean,
         show: boolean,
     }>({
-        offset: 0,
+        skip: 0,
         limit: 10,
         listPharmacy: [],
+        outOfData: false,
         show: false,
     })
 
@@ -39,9 +43,10 @@ const SearchPharmacys = React.memo(() => {
     const resetState = () => {
         inputSearch.current.value = ''
         setState({
-            offset: 0,
+            skip: 0,
             limit: 10,
             listPharmacy: [],
+            outOfData: false,
             show: false,
         })
     }
@@ -53,7 +58,7 @@ const SearchPharmacys = React.memo(() => {
         }
 
         const params = {
-            offset: state.offset,
+            skip: state.skip,
             limit: state.limit,
             mName: value,
             adminId: accountInfo.doctor.mId
@@ -62,17 +67,19 @@ const SearchPharmacys = React.memo(() => {
         getListPharmacyAsync.execute(params).then(res => {
             setState(prev => ({
                 ...prev,
-                offset: 0,
+                skip: 0,
                 listPharmacy: res,
                 show: true,
+                outOfData: res.length === 0
             }))
         })
     }, 500)
 
     const handleScroll = (e: any) => {
+        if (state.outOfData) return
         const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
         const params = {
-            offset: state.offset,
+            skip: state.skip + 10,
             limit: state.limit,
             mName: inputSearch.current.value,
             adminId: accountInfo.doctor.mId
@@ -82,8 +89,9 @@ const SearchPharmacys = React.memo(() => {
             getListPharmacyAsync.execute(params).then(res => {
                 setState(prev => ({
                     ...prev,
-                    offset: prev.offset + 10,
-                    listPharmacy: [...prev.listPharmacy, ...res]
+                    skip: prev.skip + 10,
+                    listPharmacy: [...prev.listPharmacy, ...res],
+                    outOfData: res.length < 10
                 }))
             })
         }
@@ -113,7 +121,11 @@ const SearchPharmacys = React.memo(() => {
                             })}
                         />
                         <span id="btn-search-clear" onClick={resetState}>
-                            <img src="./images/cancel.svg" title="Xóa" className="img-fluid" width={24} />
+                            {
+                                getListPharmacyAsync.status === 'loading' ?
+                                    <Loading /> :
+                                    <img src="./images/cancel.svg" title="Xóa" className="img-fluid" width={24} />
+                            }
                         </span>
                         <button type="button" className="btn-search">
                             <img src="./images/search.svg" title="Tìm kiếm" className="img-fluid" width={24} />
@@ -141,12 +153,6 @@ const SearchPharmacys = React.memo(() => {
                                 })
                             }
                         </ul>
-                    </div>
-                }
-                {
-                    getListPharmacyAsync.status === 'loading' &&
-                    <div className='p-3 d-flex justify-content-center'>
-                        <Loading />
                     </div>
                 }
             </div>

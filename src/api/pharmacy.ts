@@ -1,3 +1,4 @@
+import { CONFIG } from '../config';
 import { PharmacyDetailModel, PharmacyModel } from './../models/pharmacy';
 import client from "./base"
 
@@ -26,4 +27,12 @@ export const getDetailPharmacy = async (params: IGetDetailPharmacy) => {
         .then(res => {
             return new PharmacyDetailModel(res?.data)
         })
+}
+
+export const getPharmacyInfoLocal = () => {
+    const jsonPharmacyInfo: any = localStorage.getItem(CONFIG.PHARMACY_INFO)
+    return JSON.parse(jsonPharmacyInfo) as {
+        pharmacyCode: string,
+        pharmacyId: number
+    }
 }

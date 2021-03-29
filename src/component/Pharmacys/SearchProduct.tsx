@@ -84,7 +84,7 @@ const SearchProduct = React.memo(() => {
                 listProduct: res.data,
                 show: true,
                 total: res.total,
-                outOfData: res.data.length == 0
+                outOfData: res.data.length === 0
             }))
         })
     }, 500)
@@ -105,7 +105,7 @@ const SearchProduct = React.memo(() => {
                     from: prev.from + 10,
                     listProduct: [...prev.listProduct, ...res.data],
                     total: res.total,
-                    outOfData: res.data.length == 0
+                    outOfData: res.data.length < 10
                 }))
             })
         }
@@ -135,8 +135,13 @@ const SearchProduct = React.memo(() => {
                             })}
                         />
                         <span id="btn-search-clear" onClick={resetState}>
-                            <img src="./images/cancel.svg" title="Xóa" className="img-fluid" width={24} />
+                            {
+                                searchProductAsync.status == 'loading' ?
+                                    <Loading /> :
+                                    <img src="./images/cancel.svg" title="Xóa" className="img-fluid" width={24} />
+                            }
                         </span>
+
                         <button type="button" className="btn-search">
                             <img src="./images/search.svg" title="Tìm kiếm" className="img-fluid" width={24} />
                         </button>
@@ -155,12 +160,6 @@ const SearchProduct = React.memo(() => {
                                         </a>
                                     </li>
                                 })
-                            }
-                            {
-                                searchProductAsync.status == 'loading' &&
-                                <li className='p-3 d-flex justify-content-center'>
-                                    <Loading />
-                                </li>
                             }
                         </ul>
                     </div>

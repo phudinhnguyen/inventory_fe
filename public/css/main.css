@@ -135,7 +135,9 @@ header .navbar-toggler {
   margin-right: 5px;
 }
 
-header .navbar-toggler .navbar-toggler-icon {
+.navbar-toggler-icon {
+  position: absolute;
+  right: 14px;
   background-image: url(../images/navbar_mobile.png);
 }
 
@@ -211,7 +213,7 @@ header .btn-back {
 }
 
 .form-search {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
@@ -350,7 +352,7 @@ table td.price {
 }
 
 .table-products {
-  max-height: calc(100vh - 300px);
+  max-height: calc(100vh - 380px);
   overflow-y: auto;
   width: 100%;
 }
@@ -400,6 +402,10 @@ textarea.form-control {
   color: #FFFFFF !important;
   text-transform: uppercase;
   padding: 10px 30px;
+}
+
+.btn-orange{
+  background-color: #FF812C !important;
 }
 
 .btn-primary {
@@ -565,6 +571,7 @@ body.login .login-form .form-group .form-control {
   border-radius: 50%;
   border-top: 4px solid #26cd7a;
   width: 25px;
+  min-width: 25px;
   height: 25px;
   -webkit-animation: spin 1s linear infinite;
   /* Safari */
